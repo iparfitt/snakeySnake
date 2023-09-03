@@ -39,7 +39,7 @@ class Snake():
     def draw(self, display) -> bool:
         for idx in range(1, self.bodyLen):
             if idx % 2 == 1:
-                pygame.draw.rect(display, "blue", self.body[idx])
+                pygame.draw.rect(display, "yellow", self.body[idx])
             else:
                 pygame.draw.rect(display, "green", self.body[idx])
         
