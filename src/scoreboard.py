@@ -36,18 +36,23 @@ class ScoreBoard:
         font = pygame.font.Font('freesansbold.ttf', 20)
         text = font.render(str(int(self.score)), 
                            True, 
-                           (255, 255, 255))
+                           "white")
         textRect = text.get_rect()
-        textRect.center = 20, 20
+        textRect.center = 30, 30
         display.blit(text, textRect)
 
     def displayPastScores(self, display):
         font = pygame.font.Font('freesansbold.ttf', 20)
 
         for idx in range(0, 5):
-            text = font.render(str(idx + 1) + ". " + str(int(self.pastScores[idx])), 
-                               True, 
-                               (0, 0, 255))
+            if (abs(int(self.pastScores[idx]) - self.score) < 2):
+                text = font.render(str(idx + 1) + ". " + str(int(self.pastScores[idx])), 
+                                   True, 
+                                   "green")
+            else:
+                text = font.render(str(idx + 1) + ". " + str(int(self.pastScores[idx])), 
+                                   True, 
+                                   "blue")
             textRect = text.get_rect()
             x, y = display.get_size()
             textRect.center = x/2, 5 * y/12 + 20*idx

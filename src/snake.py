@@ -1,11 +1,11 @@
 import pygame
 
+directionMap = {"Left": (-1, 0),
+                "Right": (1, 0),
+                "Up": (0, -1),
+                "Down": (0, 1)}
 class Snake():
     def __init__(self, startingPos):
-        self.blue = (0,0,255)
-        self.red = (255,0,0)
-        self.white = (255, 255, 255)
-        self.black = (0, 0, 0)
         self.size = 20
         self.body = [pygame.Rect(startingPos, 
                                  startingPos, 
@@ -14,12 +14,14 @@ class Snake():
         self.bodyLen = 1
         self.headX = startingPos
         self.headY = startingPos
-        self.direction = [1, 0] # Initially moving right
+        self.directionName = "Right"
+        self.direction = directionMap[self.directionName] # Initially moving right
     
     # Update snake direction
-    def move(self, xMove, yMove):
-        self.direction = [xMove, yMove]
-        self._shift(xMove, yMove)
+    def move(self, directionName):
+        self.directionName = directionName
+        self.direction = directionMap[directionName]
+        self._shift(self.direction[0], self.direction[1])
         
     # Shift snake 1 pixel in the direction of travel
     def update(self):
@@ -35,8 +37,30 @@ class Snake():
 
     # Draw snake, return true if updated, false if game over
     def draw(self, display) -> bool:
-        for pixel in self.body:
-            pygame.draw.rect(display, self.blue, pixel)
+        for idx in range(1, self.bodyLen):
+            if idx % 2 == 1:
+                pygame.draw.rect(display, "blue", self.body[idx])
+            else:
+                pygame.draw.rect(display, "green", self.body[idx])
+        
+        radius = int(self.size/2)
+        topLeft = (self.directionName == "Left" or 
+                   self.directionName == "Up") * radius
+        topRight = (self.directionName == "Right" or 
+                    self.directionName == "Up") * radius
+        bottomLeft = (self.directionName == "Left" or 
+                      self.directionName == "Down") * radius
+        bottomRight = (self.directionName == "Right" or 
+                       self.directionName == "Down") * radius
+        pygame.draw.rect(display, 
+                         "green", 
+                         self.body[0], 
+                         0, 
+                         radius,
+                         topLeft,
+                         topRight,
+                         bottomLeft,
+                         bottomRight)
 
     def collectedApple(self, appleLocations) -> bool:
         for apple in appleLocations:

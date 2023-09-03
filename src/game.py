@@ -35,22 +35,21 @@ class Game:
                 for event in pygame.event.get():
                     # Move snake based on key movements
                     if (event.type == pygame.KEYDOWN):
-                        xMove = 0
-                        yMove = 0
+                        direction = ""
                         if ((event.key == pygame.K_w) or
                             (event.key == pygame.K_UP)):
-                            yMove = -1
+                            direction = "Up"
                         elif ((event.key == pygame.K_s) or
                             (event.key == pygame.K_DOWN)):
-                            yMove = 1
+                            direction = "Down"
                         elif ((event.key == pygame.K_a) or
                             (event.key == pygame.K_LEFT)):
-                            xMove = -1
+                            direction = "Left"
                         elif ((event.key == pygame.K_d) or
                             (event.key == pygame.K_RIGHT)):
-                            xMove = 1
+                            direction = "Right"
                 
-                        self.snake.move(xMove, yMove)
+                        self.snake.move(direction)
             
                 # Move in direction of travel
                 if time.perf_counter() - self.lastUpdateTime > 0.1:
@@ -61,10 +60,10 @@ class Game:
                         self.scoreBoard.appleCollected()
                         self.snake.addToTail()
 
-                display.fill(self.snake.black)
+                display.fill("black")
                 for apple in self.appleLocations:
                         pygame.draw.circle(display, 
-                                           self.snake.red, 
+                                           "red", 
                                            (apple[0],
                                             apple[1]),
                                            self.snake.size)
@@ -96,7 +95,7 @@ class Game:
             font = pygame.font.Font('freesansbold.ttf', 32)
             text = font.render('Game Over', 
                                True, 
-                               self.snake.white)
+                               "white")
             textRect = text.get_rect()
             textRect.center = [self.displaySize/2, self.displaySize/3]
             display.blit(text, textRect)
