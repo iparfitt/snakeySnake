@@ -22,6 +22,9 @@ Version: 0.0.1
 python = ">=3.7"
 pygame==2.1.3.dev8
 
+## To install
+Run `pip3 install snakeySnake` from command line
+
 ## To run:
 - Run `snake-cli` from the command line
 - Move using "ASWD" or arrow keys
