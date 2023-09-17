@@ -3,15 +3,20 @@
 Version: 0.0.1
 
 ## Structure:
-snakeySnake
-|_ data
-       |_ apple.png
-       |_ scoreboard.txt
-    |_ __init__.py
-    |_ __main__.py
-    |_ game.py
-    |_ scoreboard.py
-    |_ snake.py
+    .
+    ├── build                   # Compiled files (alternatively `dist`)
+    ├── snakeySnake             # Source files
+        ├── data                # Data used in the application
+            ├── apple.png       # The image used for apples
+            ├── scoreboard.txt  # Local record of scores
+        ├── __init__.py
+        ├── __main__.py         # Main program file
+        ├── game.py
+        ├── scoreboard.py
+        ├── snake.py
+    ├── tests                   # Automated tests
+    ├── LICENSE
+    └── README.md
 
 ## To run:
 - Run `snake-cli` from the command line
