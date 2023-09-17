@@ -1,6 +1,6 @@
 # snakeySnake
 
-Version: 0.0.1
+Version: 0.0.2
 
 ## Structure:
     .
@@ -33,3 +33,4 @@ Run `pip3 install snakeySnake` from command line
 
 ## Previous Versions
 - v0.0.1: Classic snake game with keyboard controls and local scoreboard
+- v0.0.2: Added tutorial and homescreen, pulled enums into separate file
