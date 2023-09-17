@@ -1,4 +1,4 @@
-from snake import Snake
+from snake import Snake, Direction
 from scoreboard import ScoreBoard
 import time
 import random
@@ -9,11 +9,15 @@ class Game:
     def __init__(self):
         self.displaySize = 600
 
-        self.snake = Snake(self.displaySize/2)
         self.scoreBoard = ScoreBoard()
+        self.snake = Snake(self.displaySize/2, 
+                           0.1, 
+                           self.scoreBoard.addTimeSurvived, 
+                           self.scoreBoard.addAppleCollected)
         self.lastUpdateTime = time.perf_counter()
         self.lastAppleTime = time.perf_counter()
 
+        self.appleSize = self.snake.size * 2
         self.appleLocations = []
         self.gameOver = False
         self.exit = False
@@ -25,6 +29,9 @@ class Game:
         pygame.display.update()
         pygame.display.set_caption('Snake Game')
 
+        appleImage = pygame.image.load("src/data/apple.png").convert()
+        appleImage = pygame.transform.scale(appleImage, (self.appleSize, self.appleSize))
+
         while (not self.exit):
             for event in pygame.event.get():
                 # Quit game
@@ -35,54 +42,45 @@ class Game:
                 for event in pygame.event.get():
                     # Move snake based on key movements
                     if (event.type == pygame.KEYDOWN):
-                        direction = ""
+                        direction = Direction.NONE
                         if ((event.key == pygame.K_w) or
                             (event.key == pygame.K_UP)):
-                            direction = "Up"
+                            direction = Direction.UP
                         elif ((event.key == pygame.K_s) or
                             (event.key == pygame.K_DOWN)):
-                            direction = "Down"
+                            direction = Direction.DOWN
                         elif ((event.key == pygame.K_a) or
                             (event.key == pygame.K_LEFT)):
-                            direction = "Left"
+                            direction = Direction.LEFT
                         elif ((event.key == pygame.K_d) or
                             (event.key == pygame.K_RIGHT)):
-                            direction = "Right"
+                            direction = Direction.RIGHT
                 
                         self.snake.move(direction)
-            
-                # Move in direction of travel
-                if time.perf_counter() - self.lastUpdateTime > 0.1:
-                    self.scoreBoard.addTimeSurvived(time.perf_counter() - self.lastUpdateTime)
-                    self.lastUpdateTime = time.perf_counter()
-                    self.snake.update()
-                    if self.snake.collectedApple(self.appleLocations):
-                        self.scoreBoard.appleCollected()
-                        self.snake.addToTail()
+                self.snake.update(self.appleLocations)
 
                 display.fill("black")
-                for apple in self.appleLocations:
-                        pygame.draw.circle(display, 
-                                           "red", 
-                                           (apple[0],
-                                            apple[1]),
-                                           self.snake.size)
 
-                if time.perf_counter() - self.lastAppleTime > 5.0:
-                    self.lastAppleTime = time.perf_counter()
-                    apple = (random.randint(0, self.displaySize),
-                            random.randint(0, self.displaySize))
-                    self.appleLocations.append(apple)
-                
+                self._drawApples(display, appleImage)
                 self.snake.draw(display)
                 self.scoreBoard.displayCurrentScore(display)
-                self.checkGameOver(display)
+
+                self._checkGameOver(display)
                 pygame.display.update()
         
         pygame.quit()
         quit()
     
-    def checkGameOver(self, display):
+    def _drawApples(self, display, appleImage):
+        if time.perf_counter() - self.lastAppleTime > 5.0:
+            self.lastAppleTime = time.perf_counter()
+            self.appleLocations.append((random.randint(0, self.displaySize - self.appleSize),
+                                        random.randint(0, self.displaySize - self.appleSize)))
+
+        for apple in self.appleLocations:
+            display.blit(appleImage, apple)
+
+    def _checkGameOver(self, display):
         x = self.snake.getHeadX()
         y = self.snake.getHeadY()
 

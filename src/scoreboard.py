@@ -11,7 +11,7 @@ class ScoreBoard:
         self.score = 0
         self.pastScores = []
 
-    def appleCollected(self):
+    def addAppleCollected(self):
         self.score += 250
     
     def addTimeSurvived(self, time):
