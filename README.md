@@ -18,6 +18,10 @@ Version: 0.0.1
     ├── LICENSE
     └── README.md
 
+## Requirements
+python = ">=3.7"
+pygame==2.1.3.dev8
+
 ## To run:
 - Run `snake-cli` from the command line
 - Move using "ASWD" or arrow keys
