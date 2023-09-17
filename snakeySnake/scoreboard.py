@@ -44,7 +44,11 @@ class ScoreBoard:
     def displayPastScores(self, display):
         font = pygame.font.Font('freesansbold.ttf', 20)
 
-        for idx in range(0, 5):
+        numScores = 5
+        if self.pastScores.__len__() < 5:
+            numScores = self.pastScores.__len__()
+
+        for idx in range(0, numScores):
             if (abs(int(self.pastScores[idx]) - self.score) < 2):
                 text = font.render(str(idx + 1) + ". " + str(int(self.pastScores[idx])), 
                                    True, 

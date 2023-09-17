@@ -1,2 +1,6 @@
-src/__pycache__
-src/data/scoreboard.txt
+snakeySnake/__pycache__
+snakeySnake/data/scoreboard.txt
+*.egg-info/
+build/
+dist/
+.DS_Store

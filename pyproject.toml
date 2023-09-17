@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "snakeySnake"
+version = "0.0.1"
+authors = [
+  { name="Izzy Parfitt", email="isobelleparfitt@gmail.com" },
+]
+description = "A pygame implementation of the classic snake game"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.scripts]
+snake-cli = "snakeySnake.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["snakeySnake*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.png"]
+
+[project.urls]
+"Homepage" = "https://github.com/iparfitt/snakeySnake"
+"Bug Tracker" = "https://github.com/iparfitt/snakeySnake/issues"

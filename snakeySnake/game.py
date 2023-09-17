@@ -1,9 +1,10 @@
-from snake import Snake, Direction
-from scoreboard import ScoreBoard
 import time
 import random
-
 import pygame
+import pathlib
+
+from snakeySnake.snake import Snake, Direction
+from snakeySnake.scoreboard import ScoreBoard
 
 class Game:
     def __init__(self):
@@ -29,7 +30,7 @@ class Game:
         pygame.display.update()
         pygame.display.set_caption('Snake Game')
 
-        appleImage = pygame.image.load("src/data/apple.png").convert()
+        appleImage = pygame.image.load(str(pathlib.Path(__file__).parent.absolute()) + "/data/apple.png").convert()
         appleImage = pygame.transform.scale(appleImage, (self.appleSize, self.appleSize))
 
         while (not self.exit):
