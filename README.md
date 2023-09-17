@@ -23,3 +23,6 @@ Version: 0.0.1
 - Move using "ASWD" or arrow keys
 - Collect points by collecting apples and survivng 
 - Game over if the snake runs into itself or any walls
+
+## Previous Versions
+- v0.0.1: Classic snake game with keyboard controls and local scoreboard
