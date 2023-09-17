@@ -1,13 +1,7 @@
 import pygame
-from enum import Enum
 from time import perf_counter as timer
 
-class Direction(Enum):
-    NONE = 0
-    LEFT = 1
-    RIGHT = 2
-    UP = 3
-    DOWN = 4
+from snakeySnake.enums import Direction
 
 directionMap = {Direction.NONE: (0, 0),
                 Direction.LEFT: (-1, 0),

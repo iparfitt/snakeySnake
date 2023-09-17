@@ -3,7 +3,8 @@ import random
 import pygame
 import pathlib
 
-from snakeySnake.snake import Snake, Direction
+from snakeySnake.enums import Direction, Screen
+from snakeySnake.snake import Snake
 from snakeySnake.scoreboard import ScoreBoard
 
 class Game:
