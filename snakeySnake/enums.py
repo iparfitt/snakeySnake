@@ -12,3 +12,4 @@ class Screen(Enum):
     SCOREBOARD = 1
     TUTORIAL = 2
     GAME = 3
+    GAMEOVER = 4
