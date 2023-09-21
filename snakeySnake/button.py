@@ -17,21 +17,21 @@ class Button:
             text    (str): The text to display on the button
             onClick (function(None)): The function to play when the button is clicked
         """
-        self.display = display
+        self._display = display
         
         font = pygame.font.Font('freesansbold.ttf', 20)
-        self.text = font.render(text, 
+        self._text = font.render(text, 
                                 True, 
                                 "black")
-        self.textRect = self.text.get_rect()
-        self.textRect.center = [x, y]
-        self.buttonSurface = pygame.Surface((len(text) * 15, 20))
-        self.buttonRect = pygame.Rect(0, 0, len(text) * 15, 20)
-        self.buttonRect.center = [x, y]
+        self._textRect = self._text.get_rect()
+        self._textRect.center = [x, y]
+        self._buttonSurface = pygame.Surface((len(text) * 15, 20))
+        self._buttonRect = pygame.Rect(0, 0, len(text) * 15, 20)
+        self._buttonRect.center = [x, y]
 
-        self.onClick = onClick
+        self._onClick = onClick
 
-        self.fillColors = {'normal': '#ffffff',
+        self._fillColors = {'normal': '#ffffff',
                            'hover': '#666666',
                            'pressed': '#333333'}
     
@@ -39,22 +39,22 @@ class Button:
         """Determine if the button has been pressed, and change the surface accordingly"""
 
         if (self._isPressed()):
-            self.onClick()
+            self._onClick()
         
-        self.buttonSurface.blit(self.text, [self.buttonRect.width/2 - self.textRect.width/2,
-                                            self.buttonRect.height/2 - self.textRect.height/2])
-        self.display.blit(self.buttonSurface, self.buttonRect)
+        self._buttonSurface.blit(self._text, [self._buttonRect.width/2 - self._textRect.width/2,
+                                            self._buttonRect.height/2 - self._textRect.height/2])
+        self._display.blit(self._buttonSurface, self._buttonRect)
     
     def _isPressed(self) -> None:
         """Return true if the button has been pressed, false otherwise"""
 
         mousePos = pygame.mouse.get_pos()
-        self.buttonSurface.fill(self.fillColors['normal'])
-        if (self.buttonRect.collidepoint(mousePos)):
-            self.buttonSurface.fill(self.fillColors['hover'])
+        self._buttonSurface.fill(self._fillColors['normal'])
+        if (self._buttonRect.collidepoint(mousePos)):
+            self._buttonSurface.fill(self._fillColors['hover'])
 
             for event in pygame.event.get():
                 if (event.type == pygame.MOUSEBUTTONDOWN):
-                    self.buttonSurface.fill(self.fillColors['pressed'])
+                    self._buttonSurface.fill(self._fillColors['pressed'])
                     return True
         return False
