@@ -3,21 +3,33 @@ import os
 
 absolutePath = os.path.dirname(__file__)
 
+# A class which described the score history of the game
 class ScoreBoard:
     # Score:
     # + 250 points for every apple collected
     # + 5 points for every second survived
-    def __init__(self):
+    def __init__(self, 
+                 display: pygame.display) -> None:
+        """Initialises a ScoreBoard
+
+        Args:
+            display (pygame.display): The surface to place the score board on
+        """
+        self.display = display
         self.score = 0
         self.pastScores = []
 
-    def addAppleCollected(self):
+    def addAppleCollected(self) -> None:
+        """Increase the score by an apple collected"""
         self.score += 250
     
-    def addTimeSurvived(self, time):
+    def addTimeSurvived(self, time) -> None:
+        """Increase the score by the time survived"""
         self.score += 5 * time
 
-    def writeToFile(self):
+    def writeToFile(self) -> None:
+        """Write the current score to file"""
+
         with open(os.path.join(absolutePath, "data/scoreboard.txt"), "r") as fRead:
             line = fRead.readline()
             while line != '':
@@ -32,16 +44,25 @@ class ScoreBoard:
                 fWrite.write(str(place) + "," + str(round(score)) + "\n")
                 place += 1
 
-    def displayCurrentScore(self, display):
+    def displayCurrentScore(self, 
+                            borderWidth: float) -> None:
+        """Display the current score on the screen
+
+        Args:
+            borderWidth (float): The width of the screen's border
+        """
         font = pygame.font.Font('freesansbold.ttf', 20)
         text = font.render(str(int(self.score)), 
                            True, 
                            "white")
         textRect = text.get_rect()
-        textRect.center = 30, 30
-        display.blit(text, textRect)
+        textRect.top = borderWidth + 10
+        textRect.left = borderWidth + 10
+        self.display.blit(text, textRect)
 
-    def displayPastScores(self, display):
+    def displayPastScores(self) -> None:
+        """Display local score history"""
+
         font = pygame.font.Font('freesansbold.ttf', 20)
 
         numScores = 5
@@ -58,6 +79,6 @@ class ScoreBoard:
                                    True, 
                                    "blue")
             textRect = text.get_rect()
-            x, y = display.get_size()
+            x, y = self.display.get_size()
             textRect.center = x/2, 5 * y/12 + 20*idx
-            display.blit(text, textRect)
+            self.display.blit(text, textRect)

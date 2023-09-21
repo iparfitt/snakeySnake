@@ -6,31 +6,18 @@ import pathlib
 from snakeySnake.enums import Direction, Screen
 from snakeySnake.snake import Snake
 from snakeySnake.scoreboard import ScoreBoard
+from snakeySnake.button import Button
 
-class Button:
-    def __init__(self, display, x, y, text, onClick):
-        font = pygame.font.Font('freesansbold.ttf', 20)
-        self.text = font.render(text, 
-                                True, 
-                                "white")
-        self.textRect = self.text.get_rect()
-        self.textRect.center = [display.get_width()/3, display.get_height()/4]
-
-        self.onClick = onClick
-        
-        pygame.draw.rect(display, "grey", 20, )
-        display.blit(self.text, self.textRect)
-    
-    def process(self):
-        if (self._isPressed()):
-            self.onClick()
-    
-    def _isPressed(self):
-        pass
-
+# The main class describing a snake game
 class Game:
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialises a game object"""
+
         self.displaySize = 600
+        self.borderWidth = 10
+        self.gameSize = self.displaySize - self.borderWidth
+        self.fps = 60
+        self.fpsClock = pygame.time.Clock()
 
         # Initialise board
         pygame.init()
@@ -39,8 +26,10 @@ class Game:
         pygame.display.update()
         pygame.display.set_caption('Snake Game')
 
-        self.scoreBoard = ScoreBoard()
-        self.snake = Snake(self.displaySize/2, 
+        self.scoreBoard = ScoreBoard(self.display)
+        self.snake = Snake(self.display,
+                           (self.displaySize/2,
+                            self.displaySize/2),
                            0.1, 
                            self.scoreBoard.addTimeSurvived, 
                            self.scoreBoard.addAppleCollected)
@@ -56,7 +45,9 @@ class Game:
         self.gameOver = False
         self.exit = False
 
-    def run(self):
+    def run(self) -> None:
+        """Run the main loop of the game"""
+
         while (not self.exit):
             for event in pygame.event.get():
                 # Quit game
@@ -74,33 +65,43 @@ class Game:
             else:
                 self._gameOverScreen()
         
-            pygame.display.update()
+            pygame.display.flip()
+            self.fpsClock.tick(self.fps)
         
         pygame.quit()
         quit()
     
-    def _drawApples(self):
+    def _drawApples(self) -> None:
+        """Draw apples in a random location if time since the last apple has elapsed"""
+
         if time.perf_counter() - self.lastAppleTime > 5.0:
             self.lastAppleTime = time.perf_counter()
-            self.appleLocations.append((random.randint(0, self.displaySize - self.appleSize),
-                                        random.randint(0, self.displaySize - self.appleSize)))
+            self.appleLocations.extend([(random.randint(self.borderWidth, self.gameSize - self.appleSize),
+                                        random.randint(self.borderWidth, self.gameSize - self.appleSize))])
 
         for apple in self.appleLocations:
             self.display.blit(self.appleImage, apple)
 
-    def _checkGameOver(self):
+    def _checkGameOver(self) -> None:
+        """Runs cleanup if the game is over, including writing the current score to file and resetting the game"""
+
         x = self.snake.getHeadX()
         y = self.snake.getHeadY()
 
-        if (x >= self.displaySize or
-            x <= 0 or
-            y >= self.displaySize or
-            y <= 0 or
+        if (x >= self.gameSize or
+            x <= self.borderWidth or
+            y >= self.gameSize or
+            y <= self.borderWidth or
             self.snake.ranIntoItself()):
 
             self.screen = Screen.GAMEOVER
+            self.scoreBoard.writeToFile()
+            self.snake.reset()
+            self.appleLocations.clear()
     
-    def _gameScreen(self):
+    def _gameScreen(self) -> None:
+        """Displays the game screen, ready for keyboard events"""
+
         while (self.screen == Screen.GAME):
             for event in pygame.event.get():
                 # Move snake based on key movements
@@ -118,80 +119,151 @@ class Game:
                     elif ((event.key == pygame.K_d) or
                         (event.key == pygame.K_RIGHT)):
                         direction = Direction.RIGHT
-                
                     self.snake.move(direction)
-                self.snake.update(self.appleLocations)
+            self.snake.update(self.appleLocations)
+            
+            self.display.fill("grey")
+            pygame.draw.rect(self.display, 
+                             "black", 
+                             [self.borderWidth, 
+                              self.borderWidth, 
+                              self.gameSize - self.borderWidth, 
+                              self.gameSize - self.borderWidth])
 
-            self.display.fill("black")
-            self._drawApples(self.display, self.appleImage)
-            self.snake.draw(self.display)
-            self.scoreBoard.displayCurrentScore(self.display)
-            self._checkGameOver(self.display)
-            pygame.display.update()
+            self._drawApples()
+            self.snake.draw()
+            self.scoreBoard.displayCurrentScore(self.borderWidth)
+            self._checkGameOver()
+            pygame.display.flip()
+            self.fpsClock.tick(self.fps)
 
-    def _tutorialScreen(self):
+    def _startScreen(self) -> None:
+        """Displays the start screen, ready for keyboard events"""
+
+        self.display.fill("black")
+        for i in range(0, self.displaySize, int(self.appleSize * 4.6)):
+            for j in range(0, self.displaySize, int(self.appleSize * 4.6)):
+                self.display.blit(self.appleImage, (i, j))
+
+        font = pygame.font.Font('freesansbold.ttf', 60)
+        text = font.render('SnakeySnake', 
+                            True, 
+                            "white")
+        textRect = text.get_rect()
+        textRect.center = [self.displaySize/2, self.displaySize/2]
+        self.display.blit(text, textRect)
+        tutorialButton = Button(self.display, 
+                                self.displaySize/6, 
+                                2 * self.displaySize/3, 
+                                "Tutorial",
+                                self._screenToTutorial)
+        startButton = Button(self.display, 
+                             self.displaySize/2, 
+                             2 * self.displaySize/3, 
+                             "Start Game",
+                             self._screenToGame)
+        scoreBoardButton = Button(self.display, 
+                                  5 * self.displaySize/6, 
+                                  2 * self.displaySize/3, 
+                                  "Score Board",
+                                  self._screenToScoreBoard)
+
+        startButton.process()
+        tutorialButton.process()
+        scoreBoardButton.process()
+
+    def _tutorialScreen(self) -> None:
+        """Displays a tutorial for the snake game"""
+
         self.display.fill("black")
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render('Tutorial', 
                            True, 
-                           "white")
+                           "grey")
         textRect = text.get_rect()
         textRect.center = [self.displaySize/2, self.displaySize/3]
         self.display.blit(text, textRect)
 
-    def _startScreen(self):
-        while (self.screen == Screen.START):
-            self.display.fill("black")
-
-            for i in range(0, self.displaySize, self.appleSize * 2):
-                for j in range(0, self.displaySize, self.appleSize * 2):
-                    self.display.blit(self.appleImage, (i, j))
-
-            font = pygame.font.Font('freesansbold.ttf', 50)
-            text = font.render('SnakeySnake', 
-                                True, 
-                                "white")
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        textStrings = ["- Move your snake using 'ASWD' or the arrow keys",
+                       "- Collect",
+                       "- Don't run into yourself or the walls",
+                       "Good Luck!"]
+        
+        buffer = 40
+        for line in textStrings:
+            text = font.render(line, 
+                               True, 
+                               "white")
             textRect = text.get_rect()
-            textRect.center = [self.displaySize/2, self.displaySize/2]
+            textRect.center = [self.displaySize/2, self.displaySize/3 + buffer]
             self.display.blit(text, textRect)
+            buffer += 40
 
-            startButton = Button(self.display, 
-                                 self.displaySize/4, 
-                                 self.displaySize/3, 
-                                 "Start Game",
-                                 self.screen,
-                                 Screen.GAME)
-            tutorialButton = Button(self.display, 
-                                    self.displaySize/2, 
-                                    self.displaySize/3, 
-                                    "Start Game")
-            scoreBoardButton = Button(self.display, 
-                                      3 * self.displaySize/4, 
-                                      self.displaySize/3, 
-                                      "Score Board")
-            
-            startButton.process()
-            tutorialButton.process()
-            scoreBoardButton.process()
+            if line == "- Collect":
+                self.display.blit(self.appleImage, (textRect.right + 2, textRect.top - 8))
+        
+        startButton = Button(self.display, 
+                         self.displaySize/2, 
+                         2 * self.displaySize/3, 
+                         "Back to Home",
+                         self._screenToStart)
+        startButton.process()
 
-    def _scoreBoardScreen(self):
+    def _scoreBoardScreen(self) -> None:
+        """Displays the current local scoreboard"""
+
         self.display.fill("black")
         font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('Scoreboard', 
+        text = font.render('Score Board', 
                            True, 
-                           "white")
+                           "grey")
         textRect = text.get_rect()
         textRect.center = [self.displaySize/2, self.displaySize/3]
         self.display.blit(text, textRect)
-        self.scoreBoard.displayPastScores(self.display)
+        self.scoreBoard.displayPastScores()
+        startButton = Button(self.display, 
+                         self.displaySize/2, 
+                         2 * self.displaySize/3, 
+                         "Back to Home",
+                         self._screenToStart)
+        startButton.process()
     
     def _gameOverScreen(self):
+        """Displays the game over screen"""
+
         font = pygame.font.Font('freesansbold.ttf', 32)
         text = font.render('Game Over', 
                            True, 
-                           "white")
+                           "grey")
         textRect = text.get_rect()
         textRect.center = [self.displaySize/2, self.displaySize/3]
         self.display.blit(text, textRect)
-        self.scoreBoard.writeToFile()
-        self.scoreBoard.displayPastScores(self.display)
+        self.scoreBoard.displayPastScores()
+
+        startButton = Button(self.display, 
+                             self.displaySize/2, 
+                             2 * self.displaySize/3, 
+                             "Back to Home",
+                             self._screenToStart)
+        startButton.process()
+
+    def _screenToStart(self) -> None:
+        """Changes the screen to the start screen"""
+        self.screen = Screen.START
+
+    def _screenToScoreBoard(self) -> None:
+        """Changes the screen to the scoreboard screen"""
+        self.screen = Screen.SCOREBOARD
+    
+    def _screenToTutorial(self) -> None:
+        """Changes the screen to the tutorial screen"""
+        self.screen = Screen.TUTORIAL
+    
+    def _screenToGame(self) -> None:
+        """Changes the screen to the game screen"""
+        self.screen = Screen.GAME
+    
+    def _screenToGameOver(self)-> None:
+        """Changes the screen to the game over screen"""
+        self.screen = Screen.GAMEOVER

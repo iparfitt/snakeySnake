@@ -4,3 +4,4 @@ snakeySnake/data/scoreboard.txt
 build/
 dist/
 .DS_Store
+.vscode
