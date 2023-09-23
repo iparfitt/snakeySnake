@@ -6,27 +6,29 @@ class Button:
                  display: pygame.display, 
                  x: float, 
                  y: float,
-                 text: str, 
+                 text: str,
+                 fontSize: int,
                  onClick) -> None:
         """Initialises a button object
 
         Args:
-            display (pygame.display): The surface to place the button on
-            x       (float): The left x value of the button
-            y       (float): The top y value of the button
-            text    (str): The text to display on the button
-            onClick (function(None)): The function to play when the button is clicked
+            display  (pygame.display): The surface to place the button on
+            x        (float): The left x value of the button
+            y        (float): The top y value of the button
+            text     (str): The text to display on the button
+            fontSize (int): The font size of the text
+            onClick  (function(None)): The function to play when the button is clicked
         """
         self._display = display
         
-        font = pygame.font.Font('freesansbold.ttf', 20)
+        font = pygame.font.Font('freesansbold.ttf', fontSize)
         self._text = font.render(text, 
                                 True, 
                                 "black")
         self._textRect = self._text.get_rect()
         self._textRect.center = [x, y]
-        self._buttonSurface = pygame.Surface((len(text) * 15, 20))
-        self._buttonRect = pygame.Rect(0, 0, len(text) * 15, 20)
+        self._buttonSurface = pygame.Surface((len(text) * 0.75 * fontSize, fontSize))
+        self._buttonRect = pygame.Rect(0, 0, len(text) * 0.75 * fontSize, fontSize)
         self._buttonRect.center = [x, y]
 
         self._onClick = onClick

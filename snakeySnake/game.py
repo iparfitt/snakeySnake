@@ -2,6 +2,8 @@ import time
 import random
 import pygame
 import pathlib
+import math
+import colorsys
 
 from snakeySnake.enums import Direction, Screen
 from snakeySnake.snake import Snake
@@ -30,7 +32,7 @@ class Game:
         self._snake = Snake(self._display,
                            (self._displaySize/2,
                             self._displaySize/2),
-                           0.1, 
+                           0.05, 
                            self._scoreBoard.addTimeSurvived, 
                            self._scoreBoard.addAppleCollected)
         self._lastUpdateTime = time.perf_counter()
@@ -41,6 +43,13 @@ class Game:
 
         self._appleImage = pygame.image.load(str(pathlib.Path(__file__).parent.absolute()) + "/data/apple.png").convert()
         self._appleImage = pygame.transform.scale(self._appleImage, (self._appleSize, self._appleSize))
+        
+        self._colourWheelRadius = self._snake.getSize() * 5
+        self._colourWheelImage = pygame.image.load(str(pathlib.Path(__file__).parent.absolute()) + "/data/colour_wheel.png").convert()
+        self._colourWheelImage = pygame.transform.scale(self._colourWheelImage, (self._colourWheelRadius*2, self._colourWheelRadius*2))
+
+        self._snakeDesign = ['#ffffff']
+        self._selectedColour = (255, 100, 0)
 
         self._gameOver = False
         self._exit = False
@@ -58,10 +67,12 @@ class Game:
                 self._startScreen()
             elif (self._screen == Screen.SCOREBOARD):
                 self._scoreBoardScreen()
-            elif (self._screen == Screen.TUTORIAL):
-                self._tutorialScreen()
+            elif (self._screen == Screen.CONTROLS):
+                self._controlsScreen()
             elif (self._screen == Screen.GAME):
                 self._gameScreen()
+            elif (self._screen == Screen.SNAKEDESIGN):
+                self._snakeDesignScreen()
             else:
                 self._gameOverScreen()
         
@@ -99,6 +110,157 @@ class Game:
             self._snake.reset()
             self._appleLocations.clear()
     
+    def _startScreen(self) -> None:
+        """Displays the start screen, ready for keyboard events"""
+
+        self._display.fill("black")
+        for i in range(0, self._displaySize, int(self._appleSize * 4.6)):
+            for j in range(0, self._displaySize, int(self._appleSize * 4.6)):
+                self._display.blit(self._appleImage, (i, j))
+
+        font = pygame.font.Font('freesansbold.ttf', 60)
+        text = font.render('SnakeySnake', 
+                            True, 
+                            "white")
+        textRect = text.get_rect()
+        textRect.center = [self._displaySize/2, self._displaySize/2]
+        self._display.blit(text, textRect)
+        controlsButton = Button(self._display, 
+                                5 * self._displaySize/6, 
+                                self._displaySize/14, 
+                                "Controls",
+                                20,
+                                self._screenToControls)
+        snakeDesignButton = Button(self._display, 
+                             self._displaySize/6, 
+                             2 * self._displaySize/3, 
+                             "Snake Design",
+                             20,
+                             self._screenToSnakeDesign)
+        startButton = Button(self._display, 
+                             self._displaySize/2, 
+                             2 * self._displaySize/3, 
+                             "Start Game",
+                             20,
+                             self._screenToGame)
+        scoreBoardButton = Button(self._display, 
+                                  5 * self._displaySize/6, 
+                                  2 * self._displaySize/3, 
+                                  "Score Board",
+                                  20,
+                                  self._screenToScoreBoard)
+
+        controlsButton.process()
+        snakeDesignButton.process()
+        startButton.process()
+        scoreBoardButton.process()
+
+    def _controlsScreen(self) -> None:
+        """Displays the controls for the snake game"""
+
+        self._display.fill("black")
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('Controls', 
+                           True, 
+                           "grey")
+        textRect = text.get_rect()
+        textRect.center = [self._displaySize/2, self._displaySize/3]
+        self._display.blit(text, textRect)
+
+        font = pygame.font.Font('freesansbold.ttf', 20)
+        textStrings = ["- Move your snake using 'ASWD' or the arrow keys",
+                       "- Collect",
+                       "- Don't run into yourself or the walls",
+                       "Good Luck!"]
+        
+        buffer = 40
+        for line in textStrings:
+            text = font.render(line, 
+                               True, 
+                               "white")
+            textRect = text.get_rect()
+            textRect.center = [self._displaySize/2, self._displaySize/3 + buffer]
+            self._display.blit(text, textRect)
+            buffer += 40
+
+            if line == "- Collect":
+                self._display.blit(self._appleImage, (textRect.right + 2, textRect.top - 8))
+        
+        startButton = Button(self._display, 
+                         self._displaySize/2, 
+                         2 * self._displaySize/3, 
+                         "Back to Home",
+                         20,
+                         self._screenToStart)
+        startButton.process()
+
+    def _snakeDesignScreen(self) -> None:
+        """Displays the snake design screen, ready for keyboard events"""
+
+        self._display.fill("black")
+        font = pygame.font.Font('freesansbold.ttf', 32)
+        text = font.render('Snake Design', 
+                           True, 
+                           "grey")
+        textRect = text.get_rect()
+        textRect.center = [self._displaySize/2, self._displaySize/6]
+        self._display.blit(text, textRect)
+
+        wheelRect = self._colourWheelImage.get_rect()
+        wheelRect.center = [self._displaySize/2, 5 * self._displaySize/12]
+        self._display.blit(self._colourWheelImage, wheelRect)
+
+        snakeDesignLength = len(self._snakeDesign)
+        mousePos = pygame.mouse.get_pos() 
+        for idx in range(snakeDesignLength):
+            pygame.draw.rect(self._display, 
+                             self._snakeDesign[idx],
+                             [self._displaySize/2 + self._snake.getSize() * (2 * idx - snakeDesignLength),
+                              3 * self._displaySize/4,
+                              2 * self._snake.getSize(),
+                              2 * self._snake.getSize()],
+                             border_radius = int(self._snake.getSize()/4))
+
+        distance = math.hypot(wheelRect.centerx - mousePos[0], wheelRect.centery - mousePos[1])
+        if distance <= self._colourWheelRadius:
+            for event in pygame.event.get():
+                if (event.type == pygame.MOUSEBUTTONDOWN):
+                    angle = math.atan2(mousePos[0] - wheelRect.centerx, mousePos[1] - wheelRect.centery)
+                    if angle < 0:
+                        angle += 2 * math.pi
+
+                    print(angle)
+                    rgb = colorsys.hsv_to_rgb(angle  / (2 * math.pi),
+                                              distance / self._colourWheelRadius,
+                                              1)
+                    rgb = tuple(int(i * 255) for i in rgb)
+                    print(rgb)
+                    self._snakeDesign[-1] = rgb
+            
+        if (snakeDesignLength < 5):
+            plusButton = Button(self._display,
+                                self._displaySize/2 + self._snake.getSize() * (snakeDesignLength + 1/2),
+                                3 * self._displaySize/4 + self._snake.getSize()/2, 
+                                "+",
+                                15,
+                                self._addToSnakeDesign)
+            plusButton.process()
+        if (snakeDesignLength > 1):
+            minusButton = Button(self._display, 
+                                 self._displaySize/2 + self._snake.getSize() * (snakeDesignLength + 1/2),
+                                 3 * self._displaySize/4 + 5*self._snake.getSize()/4, 
+                                 "-",
+                                 15,
+                                 self._removeFromSnakeDesign)
+            minusButton.process()
+        saveButton = Button(self._display, 
+                            self._displaySize/2, 
+                            7 * self._displaySize/8, 
+                            "Save",
+                            20,
+                            self._saveSnakeDesign)
+        saveButton.process()
+
     def _gameScreen(self) -> None:
         """Displays the game screen, ready for keyboard events"""
 
@@ -137,79 +299,6 @@ class Game:
             pygame.display.flip()
             self._fpsClock.tick(self._fps)
 
-    def _startScreen(self) -> None:
-        """Displays the start screen, ready for keyboard events"""
-
-        self._display.fill("black")
-        for i in range(0, self._displaySize, int(self._appleSize * 4.6)):
-            for j in range(0, self._displaySize, int(self._appleSize * 4.6)):
-                self._display.blit(self._appleImage, (i, j))
-
-        font = pygame.font.Font('freesansbold.ttf', 60)
-        text = font.render('SnakeySnake', 
-                            True, 
-                            "white")
-        textRect = text.get_rect()
-        textRect.center = [self._displaySize/2, self._displaySize/2]
-        self._display.blit(text, textRect)
-        tutorialButton = Button(self._display, 
-                                self._displaySize/6, 
-                                2 * self._displaySize/3, 
-                                "Tutorial",
-                                self._screenToTutorial)
-        startButton = Button(self._display, 
-                             self._displaySize/2, 
-                             2 * self._displaySize/3, 
-                             "Start Game",
-                             self._screenToGame)
-        scoreBoardButton = Button(self._display, 
-                                  5 * self._displaySize/6, 
-                                  2 * self._displaySize/3, 
-                                  "Score Board",
-                                  self._screenToScoreBoard)
-
-        startButton.process()
-        tutorialButton.process()
-        scoreBoardButton.process()
-
-    def _tutorialScreen(self) -> None:
-        """Displays a tutorial for the snake game"""
-
-        self._display.fill("black")
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('Tutorial', 
-                           True, 
-                           "grey")
-        textRect = text.get_rect()
-        textRect.center = [self._displaySize/2, self._displaySize/3]
-        self._display.blit(text, textRect)
-
-        font = pygame.font.Font('freesansbold.ttf', 20)
-        textStrings = ["- Move your snake using 'ASWD' or the arrow keys",
-                       "- Collect",
-                       "- Don't run into yourself or the walls",
-                       "Good Luck!"]
-        
-        buffer = 40
-        for line in textStrings:
-            text = font.render(line, 
-                               True, 
-                               "white")
-            textRect = text.get_rect()
-            textRect.center = [self._displaySize/2, self._displaySize/3 + buffer]
-            self._display.blit(text, textRect)
-            buffer += 40
-
-            if line == "- Collect":
-                self._display.blit(self._appleImage, (textRect.right + 2, textRect.top - 8))
-        
-        startButton = Button(self._display, 
-                         self._displaySize/2, 
-                         2 * self._displaySize/3, 
-                         "Back to Home",
-                         self._screenToStart)
-        startButton.process()
-
     def _scoreBoardScreen(self) -> None:
         """Displays the current local scoreboard"""
 
@@ -226,6 +315,7 @@ class Game:
                          self._displaySize/2, 
                          2 * self._displaySize/3, 
                          "Back to Home",
+                         20,
                          self._screenToStart)
         startButton.process()
     
@@ -245,11 +335,13 @@ class Game:
                              2 * self._displaySize/3, 
                              2 * self._displaySize/3, 
                              "Back to Home",
+                             20,
                              self._screenToStart)
         gameButton = Button(self._display, 
                              self._displaySize/3, 
                              2 * self._displaySize/3, 
                              "Try Again",
+                             20,
                              self._screenToGame)
         startButton.process()
         gameButton.process()
@@ -257,21 +349,41 @@ class Game:
     def _screenToStart(self) -> None:
         """Changes the screen to the start screen"""
         self._screen = Screen.START
-
-    def _screenToScoreBoard(self) -> None:
-        """Changes the screen to the scoreboard screen"""
-        self._screen = Screen.SCOREBOARD
     
-    def _screenToTutorial(self) -> None:
-        """Changes the screen to the tutorial screen"""
-        self._screen = Screen.TUTORIAL
+    def _screenToControls(self) -> None:
+        """Changes the screen to the controls screen"""
+        self._screen = Screen.CONTROLS
+
+    def _screenToSnakeDesign(self) -> None:
+        """Changes the screen to the snake design screen"""
+        self._screen = Screen.SNAKEDESIGN
+        self._snakeDesign = ['#ffffff']
+        self._selectedColour = (255, 100, 0)
     
     def _screenToGame(self) -> None:
         """Changes the screen to the game screen"""
         self._screen = Screen.GAME
         self._snake.startTimer()
         self._scoreBoard.reset()
+
+    def _screenToScoreBoard(self) -> None:
+        """Changes the screen to the scoreboard screen"""
+        self._screen = Screen.SCOREBOARD
     
-    def _screenToGameOver(self)-> None:
+    def _screenToGameOver(self) -> None:
         """Changes the screen to the game over screen"""
         self._screen = Screen.GAMEOVER
+    
+    def _saveSnakeDesign(self) -> None:
+        """Saves the snake design"""
+        self._snake.saveDesign(self._snakeDesign)
+        self._screen = Screen.START
+    
+    def _addToSnakeDesign(self) -> None:
+        """Add an element to the snake design"""
+        self._snakeDesign.append('#ffffff')
+    
+    def _removeFromSnakeDesign(self) -> None:
+        """Remove the back element from the snake design"""
+        self._snakeDesign.pop(-1)
+

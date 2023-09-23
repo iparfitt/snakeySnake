@@ -11,7 +11,9 @@ class Direction(Enum):
 """A enum describing the current screen of the game"""
 class Screen(Enum):
     START = 0
-    SCOREBOARD = 1
-    TUTORIAL = 2
+    CONTROLS = 1
+    SNAKEDESIGN = 2
     GAME = 3
-    GAMEOVER = 4
+    SCOREBOARD = 4
+    GAMEOVER = 5
+    

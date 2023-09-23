@@ -28,11 +28,14 @@ class Snake():
         """
         self._display = display
         self._size = 20
+        self._tongueWidth = self._size/2
         
         self._body = [pygame.Rect(startingPos,  
                                  (self._size, 
                                   self._size))]
         self._startingHead = self._body[0]
+        self._snakeDesign = ['#4CFF33', '#D733FF', '#FCFF33']
+        self._numColours = len(self._snakeDesign)
 
         self._bodyLen = 1
         self._directionName = Direction.RIGHT
@@ -80,12 +83,11 @@ class Snake():
 
     def draw(self) -> None:
         """Draw the snake on the screen"""
-
-        for idx in range(self._bodyLen):
-            if idx % 2 == 1:
-                pygame.draw.rect(self._display, "yellow", self._body[idx])
-            else:
-                pygame.draw.rect(self._display, "green", self._body[idx])
+        for idx in range(self._bodyLen - 1, -1, -1):
+            pygame.draw.rect(self._display, 
+                             self._snakeDesign[idx % self._numColours], 
+                             self._body[idx], 
+                             border_radius = int(self._size/4))
 
     def ranIntoItself(self) -> bool:
         """Returns true if the snake has run into itself, false otherwise""" 
@@ -95,6 +97,11 @@ class Snake():
                 self.getHeadY() == self._body[idx].y):
                 return True
         return False
+    
+    def saveDesign(self, snakeDesign) -> None:
+        """Set the snake design"""
+        self._snakeDesign = snakeDesign
+        self._numColours = len(self._snakeDesign)
     
     def reset(self) -> None:
         """Resets the snake to its starting location and size"""
@@ -120,8 +127,8 @@ class Snake():
             self._body[idx] = self._body[idx - 1]
 
         # Move head
-        self._body[0] = self._body[0].move(xMove * self._size, 
-                                         yMove * self._size)
+        self._body[0] = self._body[0].move(xMove * 2 * self._size/3, 
+                                           yMove * 2 * self._size/3)
     
     def _addToTail(self) -> None:
         """Adds a pixel to the tail of the snake"""
@@ -129,7 +136,7 @@ class Snake():
         self._body.append(self._body[self._bodyLen - 1])
         self._bodyLen += 1
         self._body[self._bodyLen - 1].move(self._direction[0] * -self._size,
-                                         self._direction[1] * -self._size)
+                                           self._direction[1] * -self._size)
 
     def _checkIfCollectedApple(self, 
                                appleLocations: list) -> None:
