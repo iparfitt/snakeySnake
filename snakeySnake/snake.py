@@ -34,7 +34,7 @@ class Snake():
                                  (self._size, 
                                   self._size))]
         self._startingHead = self._body[0]
-        self._snakeDesign = ['#4CFF33', '#D733FF', '#FCFF33']
+        self._snakeDesign = ['#4CFF33']
         self._numColours = len(self._snakeDesign)
 
         self._bodyLen = 1

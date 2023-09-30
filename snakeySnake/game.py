@@ -6,6 +6,7 @@ import random
 import time
 
 from snakeySnake.button import Button
+from snakeySnake.controlScreen import ControlScreen
 from snakeySnake.enums import Direction, Screen
 from snakeySnake.scoreboard import ScoreBoard
 from snakeySnake.snake import Snake
@@ -51,6 +52,8 @@ class Game:
         self._snakeDesign = ['#ffffff']
         self._selectedColour = (255, 100, 0)
 
+        self._controlScreen = ControlScreen(self._display, self._screenToStart)
+
         self._gameOver = False
         self._exit = False
 
@@ -68,7 +71,7 @@ class Game:
             elif (self._screen == Screen.SCOREBOARD):
                 self._scoreBoardScreen()
             elif (self._screen == Screen.CONTROLS):
-                self._controlsScreen()
+                self._controlScreen.draw()
             elif (self._screen == Screen.GAME):
                 self._gameScreen()
             elif (self._screen == Screen.SNAKEDESIGN):
@@ -154,45 +157,6 @@ class Game:
         snakeDesignButton.process()
         startButton.process()
         scoreBoardButton.process()
-
-    def _controlsScreen(self) -> None:
-        """Displays the controls for the snake game"""
-
-        self._display.fill("black")
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        text = font.render('Controls', 
-                           True, 
-                           "grey")
-        textRect = text.get_rect()
-        textRect.center = [self._displaySize/2, self._displaySize/3]
-        self._display.blit(text, textRect)
-
-        font = pygame.font.Font('freesansbold.ttf', 20)
-        textStrings = ["- Move your snake using 'ASWD' or the arrow keys",
-                       "- Collect",
-                       "- Don't run into yourself or the walls",
-                       "Good Luck!"]
-        
-        buffer = 40
-        for line in textStrings:
-            text = font.render(line, 
-                               True, 
-                               "white")
-            textRect = text.get_rect()
-            textRect.center = [self._displaySize/2, self._displaySize/3 + buffer]
-            self._display.blit(text, textRect)
-            buffer += 40
-
-            if line == "- Collect":
-                self._display.blit(self._appleImage, (textRect.right + 2, textRect.top - 8))
-        
-        startButton = Button(self._display, 
-                         self._displaySize/2, 
-                         2 * self._displaySize/3, 
-                         "Back to Home",
-                         20,
-                         self._screenToStart)
-        startButton.process()
 
     def _snakeDesignScreen(self) -> None:
         """Displays the snake design screen, ready for keyboard events"""
