@@ -6,7 +6,9 @@ from snakeySnake.scoreboard import ScoreBoard
 from snakeySnake.snake import Snake
 
 class Context:
-    def __init__(self):
+    def __init__(self) -> None:
+        """Initialises a context object"""
+
         self._displaySize = 600
         self._borderWidth = 10
         self._gameSize = self._displaySize - self._borderWidth
@@ -24,6 +26,7 @@ class Context:
         self._appleSize = self._snakeSize * 2
         self._colourWheelRadius = self._snakeSize * 5
 
+        # Initialises other objects
         self._scoreBoard = ScoreBoard(self._display)
         self._snake = Snake(self._display,
                             self._snakeSize,
@@ -33,6 +36,7 @@ class Context:
                             self._scoreBoard.addTimeSurvived, 
                             self._scoreBoard.addAppleCollected)
 
+        # Resize images
         self._appleImage = pygame.image.load(str(Path(__file__).parent.absolute()) + "/data/apple.png").convert()
         self._appleImage = pygame.transform.scale(self._appleImage, (self._appleSize, self._appleSize))
         
@@ -93,8 +97,6 @@ class Context:
     def screenToSnakeDesign(self) -> None:
         """Changes the screen to the snake design screen"""
         self._screen = ScreenEnum.SNAKEDESIGN
-        self._snakeDesign = ['#ffffff']
-        self._selectedColour = (255, 100, 0)
     
     def screenToGame(self) -> None:
         """Changes the screen to the game screen"""

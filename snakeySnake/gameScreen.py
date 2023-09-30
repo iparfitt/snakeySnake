@@ -2,20 +2,28 @@ import pygame
 import random
 import time
 
+from snakeySnake.context import Context
 from snakeySnake.enums import DirectionEnum, ScreenEnum
 from snakeySnake.screen import Screen
 
 class GameScreen(Screen):
-    def __init__(self, context):
+    def __init__(self, context: Context) -> None:
+        """Initialise a game screen
+        Args:
+            context (Context): A context object containing game data
+        """
         super().__init__(context)
 
         self._lastUpdateTime = time.perf_counter()
         self._lastAppleTime = time.perf_counter()
 
         self._appleLocations = []
-        
-    def draw(self) -> None:
-        """Displays the game screen, ready for keyboard events"""
+
+    def draw(self, events: list) -> None:
+        """Displays the game screen, ready for keyboard events
+        Args:
+            events (list): A list of pygame events
+        """
 
         while (self._context.getCurrentScreen() == ScreenEnum.GAME):
             for event in pygame.event.get():

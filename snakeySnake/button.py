@@ -37,25 +37,31 @@ class Button:
                             'hover': '#666666',
                             'pressed': '#333333'}
     
-    def process(self) -> None:
-        """Determine if the button has been pressed, and change the surface accordingly"""
+    def process(self, events: list) -> None:
+        """Determine if the button has been pressed, and change the surface accordingly
+        Args:
+            events (list): A list of pygame events
+        """
 
-        if (self._isPressed()):
+        if (self._isPressed(events)):
             self._onClick()
         
         self._buttonSurface.blit(self._text, [self._buttonRect.width/2 - self._textRect.width/2,
                                             self._buttonRect.height/2 - self._textRect.height/2])
         self._display.blit(self._buttonSurface, self._buttonRect)
     
-    def _isPressed(self) -> bool:
-        """Return true if the button has been pressed, false otherwise"""
+    def _isPressed(self, events: list) -> bool:
+        """Return true if the button has been pressed, false otherwise
+        Args:
+            events (list): A list of pygame events
+        """
 
         mousePos = pygame.mouse.get_pos()
         self._buttonSurface.fill(self._fillColors['normal'])
         if (self._buttonRect.collidepoint(mousePos)):
             self._buttonSurface.fill(self._fillColors['hover'])
 
-            for event in pygame.event.get():
+            for event in events:
                 if (event.type == pygame.MOUSEBUTTONDOWN):
                     self._buttonSurface.fill(self._fillColors['pressed'])
                     return True

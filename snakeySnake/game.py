@@ -1,5 +1,4 @@
 import pygame
-import time
 
 from snakeySnake.context import Context
 from snakeySnake.controlScreen import ControlScreen
@@ -30,12 +29,13 @@ class Game:
         """Run the main loop of the game"""
 
         while (not self._exit):
-            for event in pygame.event.get():
+            events = pygame.event.get()
+            for event in events:
                 # Quit game
                 if (event.type == pygame.QUIT):
                     self._exit = True
 
-            self._displayScreen[self._context.getCurrentScreen()].draw()
+            self._displayScreen[self._context.getCurrentScreen()].draw(events)
             pygame.display.flip()
             self._context.updateTimer()
         

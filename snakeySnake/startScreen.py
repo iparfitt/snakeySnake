@@ -5,7 +5,11 @@ from snakeySnake.context import Context
 from snakeySnake.screen import Screen
 
 class StartScreen(Screen):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
+        """Initialises a start screen
+        Args:
+            context (Context) A context object containing game data
+        """
         super().__init__(context)
 
         font = pygame.font.Font('freesansbold.ttf', 60)
@@ -40,8 +44,11 @@ class StartScreen(Screen):
                                         20,
                                         self._context.screenToScoreBoard)
 
-    def draw(self) -> None:
-        """Displays the start screen, ready for keyboard events"""
+    def draw(self, events: list) -> None:
+        """Displays the start screen, ready for keyboard events
+        Args:
+            events (list): A list of pygame events
+        """
 
         self._context.getDisplay().fill("black")
         for i in range(0, self._context.getDisplaySize(), int(self._context.getAppleSize() * 4.6)):
@@ -49,7 +56,7 @@ class StartScreen(Screen):
                 self._context.getDisplay().blit(self._context.getAppleImage(), (i, j))
 
         self._context.getDisplay().blit(self._text, self._textRect)
-        self._controlsButton.process()
-        self._snakeDesignButton.process()
-        self._startButton.process()
-        self._scoreBoardButton.process()
+        self._controlsButton.process(events)
+        self._snakeDesignButton.process(events)
+        self._startButton.process(events)
+        self._scoreBoardButton.process(events)

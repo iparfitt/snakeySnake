@@ -7,7 +7,11 @@ from snakeySnake.context import Context
 from snakeySnake.screen import Screen
 
 class SnakeDesignScreen(Screen):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
+        """Initialises a snake design screen
+        Args:
+            context (Context): A context object containing game data
+        """
         super().__init__(context)
 
         self._defaultColour = (211, 211, 211)
@@ -15,6 +19,7 @@ class SnakeDesignScreen(Screen):
         self._designLength = len(self._snakeDesign)
         self._selectedColour = self._defaultColour
 
+        # Initialise text
         font = pygame.font.Font('freesansbold.ttf', 32)
         self._text = font.render('Snake Design', 
                                  True, 
@@ -24,6 +29,7 @@ class SnakeDesignScreen(Screen):
         self._wheelRect = self._context.getColourWheelImage().get_rect()
         self._wheelRect.center = (int(self._context.getDisplaySize()/2), int(5 * self._context.getDisplaySize()/12))
 
+        # Initialise save button
         self._saveButton = Button(self._context.getDisplay(), 
                                   self._context.getDisplaySize()/2, 
                                   7 * self._context.getDisplaySize()/8, 
@@ -31,13 +37,16 @@ class SnakeDesignScreen(Screen):
                                   20,
                                   self._saveSnakeDesign)
 
-    def draw(self) -> None:
-        """Displays the snake design screen, ready for keyboard events"""
-
+    def draw(self, events: list) -> None:
+        """Displays the snake design screen, ready for keyboard events
+        Args:
+            events (list): A list of pygame events
+        """
+        
         self._context.getDisplay().fill("black")
         self._context.getDisplay().blit(self._text, self._textRect)
         self._context.getDisplay().blit(self._context.getColourWheelImage(), self._wheelRect)
-
+        
         self._designLength = len(self._snakeDesign)
         for idx in range(self._designLength):
             pygame.draw.rect(self._context.getDisplay(), 
@@ -51,7 +60,7 @@ class SnakeDesignScreen(Screen):
         mousePos = pygame.mouse.get_pos() 
         distance = math.hypot(self._wheelRect.centerx - mousePos[0], self._wheelRect.centery - mousePos[1])
         if distance <= self._context.getColourWheelRadius():
-            for event in pygame.event.get():
+            for event in events:
                 if (event.type == pygame.MOUSEBUTTONDOWN):
                     angle = math.atan2(mousePos[0] - self._wheelRect.centerx, mousePos[1] - self._wheelRect.centery)
                     if angle < 0:
@@ -70,7 +79,7 @@ class SnakeDesignScreen(Screen):
                                       "+",
                                       15,
                                       self._addToSnakeDesign)
-            self._plusButton.process()
+            self._plusButton.process(events)
         if (self._designLength > 1):
             self._minusButton = Button(self._context.getDisplay(), 
                                        self._context.getDisplaySize()/2 + self._context.getSnakeSize() * (self._designLength + 1/2),
@@ -78,9 +87,9 @@ class SnakeDesignScreen(Screen):
                                        "-",
                                        15,
                                        self._removeFromSnakeDesign)
-            self._minusButton.process()
+            self._minusButton.process(events)
         
-        self._saveButton.process()
+        self._saveButton.process(events)
     
     def _addToSnakeDesign(self) -> None:
         """Add an element to the snake design"""
@@ -93,4 +102,6 @@ class SnakeDesignScreen(Screen):
     def _saveSnakeDesign(self) -> None:
         """Saves the snake design"""
         self._context.saveSnakeDesign(self._snakeDesign)
+        self._snakeDesign = [self._defaultColour]
+        self._selectedColour = self._defaultColour
         self._context.screenToStart()

@@ -5,7 +5,11 @@ from snakeySnake.context import Context
 from snakeySnake.screen import Screen
 
 class ControlScreen(Screen):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
+        """Initialises a controls screen
+        Args:
+            context (Context): A context object containing game data
+        """
         super().__init__(context)
         self._display = self._context.getDisplay()
 
@@ -42,8 +46,11 @@ class ControlScreen(Screen):
                                    20,
                                    self._context.screenToStart)
 
-    def draw(self):
-        """Displays the controls for the snake game"""
+    def draw(self, events: list) -> None:
+        """Displays the controls for the snake game
+        Args:
+            events (list): A list of pygame events
+        """
 
         self._display.fill("black")
         self._display.blit(self._title, self._titleRect)
@@ -54,4 +61,4 @@ class ControlScreen(Screen):
             if self._textStrings[idx] == "- Collect":
                 self._display.blit(self._context.getAppleImage(), (self._textRects[idx].right + 2, self._textRects[idx].top - 8))
         
-        self._startButton.process()
+        self._startButton.process(events)

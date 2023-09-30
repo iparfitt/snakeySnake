@@ -1,11 +1,20 @@
 from abc import ABC, abstractmethod
+import pygame
 
 from snakeySnake.context import Context
 
 class Screen(ABC):
-    def __init__(self, context: Context):
+    def __init__(self, context: Context) -> None:
+        """Initialises a base screen object
+        Args:
+            context (Context): A context object containing game data
+        """
         self._context = context
 
     @abstractmethod
-    def draw(self):
+    def draw(self, events: list) -> None:
+        """Draws the screen onto a display. Must be overrided.
+        Args:
+            events (list): A list of pygame events
+        """
         pass
