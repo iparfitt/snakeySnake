@@ -83,7 +83,7 @@ class ScoreBoard:
                                    "blue")
             textRect = text.get_rect()
             x, y = self._display.get_size()
-            textRect.center = x/2, 5 * y/12 + 20*idx
+            textRect.center = (int(x/2), int(5 * y/12 + 20*idx))
             self._display.blit(text, textRect)
     
     def reset(self) -> None:

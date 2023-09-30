@@ -1,7 +1,7 @@
 from enum import Enum
 
 """An enum describing direction"""
-class Direction(Enum):
+class DirectionEnum(Enum):
     NONE = 0
     LEFT = 1
     RIGHT = 2
@@ -9,7 +9,7 @@ class Direction(Enum):
     DOWN = 4
 
 """A enum describing the current screen of the game"""
-class Screen(Enum):
+class ScreenEnum(Enum):
     START = 0
     CONTROLS = 1
     SNAKEDESIGN = 2

@@ -1,18 +1,19 @@
 import pygame
 from time import perf_counter as timer
 
-from snakeySnake.enums import Direction
+from snakeySnake.enums import DirectionEnum
 
-directionMap = {Direction.NONE:  (0, 0),
-                Direction.LEFT:  (-1, 0),
-                Direction.RIGHT: (1, 0),
-                Direction.UP:    (0, -1),
-                Direction.DOWN:  (0, 1)}
+directionMap = {DirectionEnum.NONE:  (0, 0),
+                DirectionEnum.LEFT:  (-1, 0),
+                DirectionEnum.RIGHT: (1, 0),
+                DirectionEnum.UP:    (0, -1),
+                DirectionEnum.DOWN:  (0, 1)}
 
 # A class describing the snake and its movements
 class Snake():
     def __init__(self, 
-                 display: pygame.Surface, 
+                 display: pygame.Surface,
+                 size: int,
                  startingPos: tuple, 
                  updateInterval: float, 
                  addTimeSurvived, 
@@ -21,13 +22,14 @@ class Snake():
 
         Args:
             display           (pygame.Surface): The surface to place the button on
+            size              (int): The size of the snake pixels to draw
             startingPos       (tuple): The starting coord of the snake
             updateInterval    (float): The interval to update the snake's movements on
             addTimeSurvived   (function(float)): A function to call when additional time is survived
             addAppleCollected (function(None)): A function to call when an apple is collected
         """
         self._display = display
-        self._size = 20
+        self._size = size
         self._tongueWidth = self._size/2
         
         self._body = [pygame.Rect(startingPos,  
@@ -38,7 +40,7 @@ class Snake():
         self._numColours = len(self._snakeDesign)
 
         self._bodyLen = 1
-        self._directionName = Direction.RIGHT
+        self._directionName = DirectionEnum.RIGHT
         self._direction = directionMap[self._directionName] # Initially moving right
 
         self._lastUpdateTime = timer()
@@ -51,11 +53,11 @@ class Snake():
         return self._size
     
     def move(self, 
-             directionName: Direction) -> None:
+             directionName: DirectionEnum) -> None:
         """Move the snake in the specified direction
 
         Args:
-            direction (Direction): The direction to move the snake in
+            direction (DirectionEnum): The direction to move the snake in
         """
         self._directionName = directionName
         self._direction = directionMap[directionName]
@@ -108,7 +110,7 @@ class Snake():
 
         self._body = [self._startingHead]
         self._bodyLen = 1
-        self._directionName = Direction.RIGHT
+        self._directionName = DirectionEnum.RIGHT
         self._direction = directionMap[self._directionName]
     
     def getHeadX(self) -> float:
