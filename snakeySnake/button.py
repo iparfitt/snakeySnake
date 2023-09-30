@@ -3,7 +3,7 @@ import pygame
 # A Class that defines a button that can be pressed in a display
 class Button:
     def __init__(self, 
-                 display: pygame.display, 
+                 display: pygame.Surface,
                  x: float, 
                  y: float,
                  text: str,
@@ -12,7 +12,7 @@ class Button:
         """Initialises a button object
 
         Args:
-            display  (pygame.display): The surface to place the button on
+            display  (pygame.Surface): The surface to place the button on
             x        (float): The left x value of the button
             y        (float): The top y value of the button
             text     (str): The text to display on the button
@@ -26,16 +26,16 @@ class Button:
                                 True, 
                                 "black")
         self._textRect = self._text.get_rect()
-        self._textRect.center = [x, y]
+        self._textRect.center = (x, y)
         self._buttonSurface = pygame.Surface((len(text) * 0.75 * fontSize, fontSize))
         self._buttonRect = pygame.Rect(0, 0, len(text) * 0.75 * fontSize, fontSize)
-        self._buttonRect.center = [x, y]
+        self._buttonRect.center = (x, y)
 
         self._onClick = onClick
 
         self._fillColors = {'normal': '#ffffff',
-                           'hover': '#666666',
-                           'pressed': '#333333'}
+                            'hover': '#666666',
+                            'pressed': '#333333'}
     
     def process(self) -> None:
         """Determine if the button has been pressed, and change the surface accordingly"""
@@ -47,7 +47,7 @@ class Button:
                                             self._buttonRect.height/2 - self._textRect.height/2])
         self._display.blit(self._buttonSurface, self._buttonRect)
     
-    def _isPressed(self) -> None:
+    def _isPressed(self) -> bool:
         """Return true if the button has been pressed, false otherwise"""
 
         mousePos = pygame.mouse.get_pos()

@@ -12,7 +12,7 @@ directionMap = {Direction.NONE:  (0, 0),
 # A class describing the snake and its movements
 class Snake():
     def __init__(self, 
-                 display: pygame.display, 
+                 display: pygame.Surface, 
                  startingPos: tuple, 
                  updateInterval: float, 
                  addTimeSurvived, 
@@ -20,7 +20,7 @@ class Snake():
         """Initialises a snake object
 
         Args:
-            display           (pygame.display): The surface to place the button on
+            display           (pygame.Surface): The surface to place the button on
             startingPos       (tuple): The starting coord of the snake
             updateInterval    (float): The interval to update the snake's movements on
             addTimeSurvived   (function(float)): A function to call when additional time is survived

@@ -1,14 +1,14 @@
-import time
-import random
-import pygame
-import pathlib
-import math
 import colorsys
+import math
+import pathlib
+import pygame
+import random
+import time
 
-from snakeySnake.enums import Direction, Screen
-from snakeySnake.snake import Snake
-from snakeySnake.scoreboard import ScoreBoard
 from snakeySnake.button import Button
+from snakeySnake.enums import Direction, Screen
+from snakeySnake.scoreboard import ScoreBoard
+from snakeySnake.snake import Snake
 
 # The main class describing a snake game
 class Game:
@@ -88,7 +88,7 @@ class Game:
         if time.perf_counter() - self._lastAppleTime > 5.0:
             self._lastAppleTime = time.perf_counter()
             self._appleLocations.extend([(random.randint(self._borderWidth, self._gameSize - self._appleSize),
-                                        random.randint(self._borderWidth, self._gameSize - self._appleSize))])
+                                          random.randint(self._borderWidth, self._gameSize - self._appleSize))])
 
         for apple in self._appleLocations:
             self._display.blit(self._appleImage, apple)
@@ -132,11 +132,11 @@ class Game:
                                 20,
                                 self._screenToControls)
         snakeDesignButton = Button(self._display, 
-                             self._displaySize/6, 
-                             2 * self._displaySize/3, 
-                             "Snake Design",
-                             20,
-                             self._screenToSnakeDesign)
+                                   self._displaySize/6, 
+                                   2 * self._displaySize/3, 
+                                   "Snake Design",
+                                   20,
+                                   self._screenToSnakeDesign)
         startButton = Button(self._display, 
                              self._displaySize/2, 
                              2 * self._displaySize/3, 
@@ -229,12 +229,10 @@ class Game:
                     if angle < 0:
                         angle += 2 * math.pi
 
-                    print(angle)
                     rgb = colorsys.hsv_to_rgb(angle  / (2 * math.pi),
                                               distance / self._colourWheelRadius,
                                               1)
                     rgb = tuple(int(i * 255) for i in rgb)
-                    print(rgb)
                     self._snakeDesign[-1] = rgb
             
         if (snakeDesignLength < 5):
@@ -312,11 +310,11 @@ class Game:
         self._display.blit(text, textRect)
         self._scoreBoard.displayPastScores()
         startButton = Button(self._display, 
-                         self._displaySize/2, 
-                         2 * self._displaySize/3, 
-                         "Back to Home",
-                         20,
-                         self._screenToStart)
+                             self._displaySize/2, 
+                             2 * self._displaySize/3, 
+                             "Back to Home",
+                             20,
+                             self._screenToStart)
         startButton.process()
     
     def _gameOverScreen(self):
@@ -338,11 +336,11 @@ class Game:
                              20,
                              self._screenToStart)
         gameButton = Button(self._display, 
-                             self._displaySize/3, 
-                             2 * self._displaySize/3, 
-                             "Try Again",
-                             20,
-                             self._screenToGame)
+                            self._displaySize/3, 
+                            2 * self._displaySize/3, 
+                            "Try Again",
+                            20,
+                            self._screenToGame)
         startButton.process()
         gameButton.process()
 

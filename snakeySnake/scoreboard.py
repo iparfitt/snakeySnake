@@ -1,6 +1,6 @@
-import pygame
-import os
 import math
+import os
+import pygame
 
 absolutePath = os.path.dirname(__file__)
 
@@ -10,11 +10,11 @@ class ScoreBoard:
     # + 250 points for every apple collected
     # + 5 points for every second survived
     def __init__(self, 
-                 display: pygame.display) -> None:
+                 display: pygame.Surface) -> None:
         """Initialises a ScoreBoard
 
         Args:
-            display (pygame.display): The surface to place the score board on
+            display (pygame.Surface): The surface to place the score board on
         """
         self._display = display
         self._score = 0
