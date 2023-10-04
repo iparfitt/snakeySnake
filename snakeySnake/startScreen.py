@@ -12,6 +12,7 @@ class StartScreen(Screen):
         """
         super().__init__(context)
 
+        # Initialise text
         font = pygame.font.Font('freesansbold.ttf', 60)
         self._text = font.render('SnakeySnake', 
                             True, 
@@ -19,6 +20,7 @@ class StartScreen(Screen):
         self._textRect = self._text.get_rect()
         self._textRect.center = (int(self._context.getDisplaySize()/2), int(self._context.getDisplaySize()/2))
 
+        # Initialise buttons
         self._controlsButton = Button(self._context.getDisplay(), 
                                       5 * self._context.getDisplaySize()/6, 
                                       self._context.getDisplaySize()/14, 

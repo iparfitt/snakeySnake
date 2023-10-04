@@ -12,6 +12,7 @@ class ScoreBoardScreen(Screen):
         """
         super().__init__(context)
 
+        # Initialise text
         font = pygame.font.Font('freesansbold.ttf', 32)
         self._text = font.render('Score Board', 
                                  True, 
@@ -19,6 +20,7 @@ class ScoreBoardScreen(Screen):
         self._textRect = self._text.get_rect()
         self._textRect.center = (int(self._context.getDisplaySize()/2), int(self._context.getDisplaySize()/3))
 
+        # Initialise button
         self._startButton = Button(self._context.getDisplay(), 
                                    self._context.getDisplaySize()/2, 
                                    2 * self._context.getDisplaySize()/3, 

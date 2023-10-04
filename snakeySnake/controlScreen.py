@@ -13,6 +13,7 @@ class ControlScreen(Screen):
         super().__init__(context)
         self._display = self._context.getDisplay()
 
+        # Initialise text
         font = pygame.font.Font('freesansbold.ttf', 32)
         self._title = font.render('Controls', 
                                   True, 
@@ -39,6 +40,7 @@ class ControlScreen(Screen):
             self._textRects.append(textRect)
             buffer += self._textBuffer
         
+        # Initialise button
         self._startButton = Button(self._context.getDisplay(), 
                                    self._context.getDisplaySize()/2, 
                                    2 * self._context.getDisplaySize()/3, 
