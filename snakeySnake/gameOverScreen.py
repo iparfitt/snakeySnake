@@ -4,7 +4,10 @@ from snakeySnake.button import Button
 from snakeySnake.context import Context
 from snakeySnake.screen import Screen
 
+
 class GameOverScreen(Screen):
+    """The screen displayed when the user fails on the game screen"""
+
     def __init__(self, context: Context) -> None:
         """Initialises a game over screen
         Args:
@@ -13,33 +16,39 @@ class GameOverScreen(Screen):
         super().__init__(context)
 
         # Initialise text
-        font = pygame.font.Font('freesansbold.ttf', 32)
-        self._text = font.render('Game Over', 
-                                 True, 
-                                 "grey")
-        self._textRect = self._text.get_rect()
-        self._textRect.center = (int(self._context.getDisplaySize()/2), int(self._context.getDisplaySize()/3))
+        font = pygame.font.Font("freesansbold.ttf", 32)
+        self._text = font.render("Game Over", True, "grey")
+        self._text_rect = self._text.get_rect()
+        self._text_rect.center = (
+            int(self._context.get_display_size() / 2),
+            int(self._context.get_display_size() / 3),
+        )
 
         # Initialise buttons
-        self._startButton = Button(self._context.getDisplay(), 
-                                   2 * self._context.getDisplaySize()/3, 
-                                   2 * self._context.getDisplaySize()/3, 
-                                   "Back to Home",
-                                   20,
-                                   self._context.screenToStart)
-        self._gameButton = Button(self._context.getDisplay(), 
-                                  self._context.getDisplaySize()/3, 
-                                  2 * self._context.getDisplaySize()/3, 
-                                  "Try Again",
-                                  20,
-                                  self._context.screenToGame)
+        self._start_button = Button(
+            self._context.get_display(),
+            int(2 * self._context.get_display_size() / 3),
+            int(2 * self._context.get_display_size() / 3),
+            "Back to Home",
+            20,
+            self._context.screen_to_start,
+        )
+        self._game_button = Button(
+            self._context.get_display(),
+            int(self._context.get_display_size() / 3),
+            int(2 * self._context.get_display_size() / 3),
+            "Try Again",
+            20,
+            self._context.screen_to_game,
+        )
+
     def draw(self, events: list) -> None:
         """Displays the game over screen
         Args:
             events (list): A list of pygame events
         """
 
-        self._context.getDisplay().blit(self._text, self._textRect)
-        self._context.getScoreBoard().displayPastScores()
-        self._startButton.process(events)
-        self._gameButton.process(events)
+        self._context.get_display().blit(self._text, self._text_rect)
+        self._context.get_score_board().display_past_scores()
+        self._start_button.process(events)
+        self._game_button.process(events)

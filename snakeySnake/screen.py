@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-import pygame
 
 from snakeySnake.context import Context
 
+
 class Screen(ABC):
+    """An abstract object used to make different screens"""
     def __init__(self, context: Context) -> None:
         """Initialises a base screen object
         Args:
@@ -17,4 +18,3 @@ class Screen(ABC):
         Args:
             events (list): A list of pygame events
         """
-        pass
