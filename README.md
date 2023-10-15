@@ -1,6 +1,6 @@
 # snakeySnake
 
-Version: 0.0.2b
+Version: 0.1.0
 
 ## Structure:
     .
@@ -35,3 +35,4 @@ Run `pip3 install snakeySnake` from command line
 - v0.0.1: Classic snake game with keyboard controls and local scoreboard
 - v0.0.2: Added tutorial and homescreen, pulled enums into separate file
 - v0.0.2b: Patch release, fixed bugs with scoreboard not update or writing to file
+- v0.1.0: Added capability to design snake and store snake design locally, refactored screens into classes to enable easier future development. Also moved shared object to context object
